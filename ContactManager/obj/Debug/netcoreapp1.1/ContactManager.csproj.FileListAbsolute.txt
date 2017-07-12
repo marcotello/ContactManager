@@ -1,0 +1,12 @@
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\Microsoft.DiaSymReader.Native.x86.dll
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\Microsoft.DiaSymReader.Native.amd64.dll
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.deps.json
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.runtimeconfig.json
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.runtimeconfig.dev.json
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.dll
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.pdb
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\obj\Debug\netcoreapp1.1\ContactManager.csprojResolveAssemblyReference.cache
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\obj\Debug\netcoreapp1.1\ContactManager.AssemblyInfo.cs
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\obj\Debug\netcoreapp1.1\ContactManager.dll
+c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\obj\Debug\netcoreapp1.1\ContactManager.pdb
+C:\Users\marco\Documents\Visual Studio 2017\Projects\ContactManager\ContactManager\obj\Debug\netcoreapp1.1\UserSecretsAssemblyInfo.cs
