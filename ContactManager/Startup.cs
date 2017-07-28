@@ -12,6 +12,10 @@ using Microsoft.Extensions.Logging;
 using ContactManager.Data;
 using ContactManager.Models;
 using ContactManager.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using ContactManager.Authorization;
 
 namespace ContactManager
 {
@@ -47,13 +51,25 @@ namespace ContactManager
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            var skipSSL = Configuration.GetValue<bool>("LocalTest:skipSSL");
-
-            services.AddMvc();
+            //services.AddMvc();
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            // Authorization handlers.
+            services.AddScoped<IAuthorizationHandler, ContactIsOwnerAuthorizationHandler>();
+
+            services.AddSingleton<IAuthorizationHandler, ContactAdministratorsAuthorizationHandler>();
+
+            services.AddSingleton<IAuthorizationHandler, ContactManagerAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +100,16 @@ namespace ContactManager
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Set password with the Secret Manager tool.
+            // dotnet user-secrets set SeedUserPW <pw>
+            var testUserPw = Configuration["SeedUserPW"];
+
+            if (String.IsNullOrEmpty(testUserPw))
+            {
+                throw new System.Exception("Use secrets manager to set SeedUserPW \n" +
+                                           "dotnet user-secrets set SeedUserPW <pw>");
+            }
 
             try
             {

@@ -7,16 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContactManager.Data;
 using ContactManager.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using ContactManager.Authorization;
 
 namespace ContactManager.Controllers
 {
     public class ContactsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ContactsController(ApplicationDbContext context)
+        public ContactsController(ApplicationDbContext context, IAuthorizationService authorizationService, UserManager<ApplicationUser> userManager)
         {
-            _context = context;    
+            _context = context;
+            _userManager = userManager;
+            _authorizationService = authorizationService;
         }
 
         // GET: Contacts
@@ -59,7 +66,15 @@ namespace ContactManager.Controllers
                 return View(editModel);
             }
 
-            var contact = ViewModel_to_model(new Contact(), editModel);          
+            var contact = ViewModel_to_model(new Contact(), editModel);
+
+            contact.OwnerID = _userManager.GetUserId(User);
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Create);
+            if (!isAuthorized)
+            {
+                return new ChallengeResult();
+            }
 
             _context.Add(contact);
             await _context.SaveChangesAsync();
