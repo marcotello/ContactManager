@@ -59,14 +59,14 @@ namespace ContactManager.Controllers
         // POST: Contacts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ContactEditViewModel editModel)
+        public async Task<IActionResult> Create(ContactEditViewModel contactViewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(editModel);
+                return View(contactViewModel);
             }
 
-            var contact = ViewModel_to_model(new Contact(), editModel);
+            var contact = ViewModel_to_model(contactViewModel, new Contact());
 
             contact.OwnerID = _userManager.GetUserId(User);
 
@@ -95,6 +95,13 @@ namespace ContactManager.Controllers
                 return NotFound();
             }
 
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Update);
+
+            if (!isAuthorized)
+            {
+                return new ChallengeResult();
+            }
+
             var editModel = Model_to_viewModel(contact);
 
             return View(editModel);
@@ -114,9 +121,26 @@ namespace ContactManager.Controllers
             if (contact == null)
             {
                 return NotFound();
-            }           
+            }
 
-            contact = ViewModel_to_model(contact, editModel);           
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Update);
+
+            if (!isAuthorized)
+            {
+                return new ChallengeResult();
+            }
+
+            contact = ViewModel_to_model(editModel, contact);
+
+            if (contact.Status == ContactStatus.Approved)
+            {
+                // If the contact is updated after approval, 
+                // and the user cannot approve set the status back to submitted
+                var canApprove = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Approve);
+
+                if (!canApprove) contact.Status = ContactStatus.Submitted;
+            }
+
 
             _context.Update(contact);
             await _context.SaveChangesAsync();
@@ -139,6 +163,12 @@ namespace ContactManager.Controllers
                 return NotFound();
             }
 
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Delete);
+            if (!isAuthorized)
+            {
+                return new ChallengeResult();
+            }
+
             return View(contact);
         }
 
@@ -148,6 +178,13 @@ namespace ContactManager.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var contact = await _context.Contact.SingleOrDefaultAsync(m => m.ContactId == id);
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, contact, ContactOperations.Delete);
+            if (!isAuthorized)
+            {
+                return new ChallengeResult();
+            }
+
             _context.Contact.Remove(contact);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -158,31 +195,31 @@ namespace ContactManager.Controllers
             return _context.Contact.Any(e => e.ContactId == id);
         }
 
-        private Contact ViewModel_to_model(Contact contact, ContactEditViewModel editModel)
+        private Contact ViewModel_to_model(ContactEditViewModel contactViewModel, Contact contact)
         {
-            contact.Address = editModel.Address;
-            contact.City = editModel.City;
-            contact.Email = editModel.Email;
-            contact.Name = editModel.Name;
-            contact.State = editModel.State;
-            contact.Zip = editModel.Zip;
+            contact.Address = contactViewModel.Address;
+            contact.City = contactViewModel.City;
+            contact.Email = contactViewModel.Email;
+            contact.Name = contactViewModel.Name;
+            contact.State = contactViewModel.State;
+            contact.Zip = contactViewModel.Zip;
 
             return contact;
         }
 
         private ContactEditViewModel Model_to_viewModel(Contact contact)
         {
-            var editModel = new ContactEditViewModel();
+            var contactViewModel = new ContactEditViewModel();
 
-            editModel.ContactId = contact.ContactId;
-            editModel.Address = contact.Address;
-            editModel.City = contact.City;
-            editModel.Email = contact.Email;
-            editModel.Name = contact.Name;
-            editModel.State = contact.State;
-            editModel.Zip = contact.Zip;
+            contactViewModel.ContactId = contact.ContactId;
+            contactViewModel.Address = contact.Address;
+            contactViewModel.City = contact.City;
+            contactViewModel.Email = contact.Email;
+            contactViewModel.Name = contact.Name;
+            contactViewModel.State = contact.State;
+            contactViewModel.Zip = contact.Zip;
 
-            return editModel;
+            return contactViewModel;
         }
     }
 }

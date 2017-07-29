@@ -113,7 +113,7 @@ namespace ContactManager
 
             try
             {
-                SeedData.Initialize(app.ApplicationServices, "").Wait();
+                SeedData.Initialize(app.ApplicationServices, testUserPw).Wait();
             }
             catch
             {

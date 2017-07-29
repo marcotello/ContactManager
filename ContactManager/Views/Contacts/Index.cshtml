@@ -1,4 +1,5 @@
 @model IEnumerable<ContactManager.Models.Contact>
+@using ContactManager.Authorization;
 
 @{
     ViewData["Title"] = "Index";
@@ -30,6 +31,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Email)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
             <th></th>
         </tr>
     </thead>
@@ -55,9 +59,19 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ContactId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ContactId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ContactId">Delete</a>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @if (await AuthorizationService.AuthorizeAsync(User, item, ContactOperations.Update))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.ContactId">Edit</a><text> | </text>
+                }
+                    <a asp-action="Details" asp-route-id="@item.ContactId">Details</a> |
+
+                @if (await AuthorizationService.AuthorizeAsync(User, item, ContactOperations.Delete))
+                {
+                    <a asp-action="Delete" asp-route-id="@item.ContactId">Delete</a>
+                }
             </td>
         </tr>
 }

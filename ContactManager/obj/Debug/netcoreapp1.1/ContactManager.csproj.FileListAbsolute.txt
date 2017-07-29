@@ -1,5 +1,3 @@
-c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\Microsoft.DiaSymReader.Native.x86.dll
-c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\Microsoft.DiaSymReader.Native.amd64.dll
 c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.deps.json
 c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.runtimeconfig.json
 c:\users\marco\documents\visual studio 2017\Projects\ContactManager\ContactManager\bin\Debug\netcoreapp1.1\ContactManager.runtimeconfig.dev.json
